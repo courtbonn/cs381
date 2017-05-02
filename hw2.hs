@@ -1,3 +1,6 @@
+--Names: Jacob Geddings
+module Hw2 where
+
 --Exercise 1. A Stack Language
 
 --Consider the stack language S defined by the following grammar. 
@@ -16,7 +19,7 @@ Similarly, the operation MULT takes the two topmost integers from the stack and 
 It also produces an error if the stack contains fewer than two elements. 
 Finally, the operation DUP places a second copy of the stack’s topmost element on the stack. 
 (You can find out the error condition for DUP yourself.) Here is a definition of the abstract syntax that you should use. -}
-
+{-
 type Prog = [Cmd]
 data Cmd = LD Int
            | ADD
@@ -26,7 +29,7 @@ data Cmd = LD Int
 --Integer stacks should be represented by the type [Int], that is, lists of integers, that is, your program should contain and use the following definition.
 
 type Stack = [Int]
-
+-}
 {-Define the semantics for the stack language as a Haskell function sem that yields the semantics of a program. 
 Please note that the semantic domain has to be defined as a function domain 
 (since the meaning of a stack program is a transformation of stacks) and as an error domain 
@@ -41,6 +44,35 @@ Please note that the semantic domain has to be defined as a function domain
 
 --Hint. Test your functions with the programs [LD 3,DUP,ADD,DUP,MULT] and [LD 3,ADD] and the empty stack [] as inputs.
 
+
+type Prog		= [Cmd]
+type Stack		= [Int]
+type D			= Stack -> Maybe Stack		--Maybe is inserted due to requirement for handling errors
+
+data Cmd		= LD Int
+			| ADD
+			| MULT
+			| DUP
+			deriving Show
+
+sem :: Prog -> D
+sem	[]	s	= Just s
+sem (x:xs)	s	= case (semCmd x s) of
+			  Nothing -> Nothing
+			  Just s' -> sem xs s'
+
+semCmd :: Cmd -> D
+semCmd (LD i)	x 	= Just (i:x)
+semCmd (DUP)  (x:xs)	= Just (x:x:xs)
+semCmd (DUP)	_	= Nothing
+semCmd (ADD)  (x:y:xs)	= Just ((x + y):xs)
+semCmd (ADD)	_	= Nothing
+semCmd (MULT) (x:y:xs)	= Just ((x * y):xs)
+semCmd (MULT)	_	= Nothing
+
+--Tests
+test0 :: Prog
+test0 = [LD 3, DUP, ADD, DUP, MULT]		--Just [36]
 
 --Exercise 2. Extending the Stack Language by Macros
 
