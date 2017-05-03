@@ -34,16 +34,21 @@ semCmd (MULT)  (x:y:xs) = Just ((x*y):xs)
 semCmd (MULT)        _  = Nothing
 
 --Exercise 1-2: Extended 
-{-
+
 sem2 :: Prog -> E
-sem2 []	      s	= Just s
-sem2 (x:xs)   s	= case (semCmd2 x s) of
-		  Nothing -> Nothing
-		  Just s' -> sem2 xs s'
+sem2 [] s = Just s
+sem2 (x:xs) = case (semCmd2 x s) of
+		  	Nothing -> Nothing
+		    Just s' -> sem2 xs s'
 
 
 --semCmd2 :: Cmd -> E
--}
+
+
+semCmd2 :: Cmd -> E
+semCmd2 (Cmd c) = 
+semCmd2 (DEF c p) (x, y) = Just ([(c, p)] ++ x, y)
+semCmd2 (CALL c)  (x, y) = (semCmd c x) y
 
 --sandbox
 p :: Prog
@@ -57,3 +62,6 @@ test1 = [LD 3, ADD]
 
 test2 :: Prog
 test2 = []
+
+test3 :: Prog
+test3 = [DEF "foo" [DUP, ADD, MULT]]
