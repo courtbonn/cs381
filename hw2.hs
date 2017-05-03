@@ -29,11 +29,14 @@ findIndex s (t,c:cs)
 				 | otherwise  = findIndex s (t,cs)
 
 
-sem :: Prog -> D
-sem []       s 	= s
-sem (x:xs)   s 	= case (semCmd x s) of
-		  Nothing -> Nothing
-		  s' -> sem xs s'
+sem :: Prog -> Stack
+sem [] = Nothing
+sem xs = sEm' xs (Just [])
+
+sEm' :: Prog -> D
+sEm' [] (Just s) = Just s
+sEm' (x:xs) (Just s) = sEm' xs (semCmd x (Just s))
+sEm' xs Nothing = Nothing   
 
 semCmd :: Cmd -> D
 semCmd (LD i)       (Just x) = Just (i:x)
@@ -46,11 +49,14 @@ semCmd (MULT)        _  = Nothing
 
 --Exercise 1-2: Extended 
 
-sem2 :: Prog -> E
-sem2 [] s = s
-sem2 (x:xs) s = case (semCmd2 x s) of
-		  Nothing -> Nothing
-		  s' -> sem2 xs s'
+sem2 :: Prog -> Maybe State
+sem2 [] = Nothing
+sem2 xs = sem2' xs (Just (Just [],[]))
+
+sem2' :: Prog -> E
+sem2' [] (Just s) = Just s
+sem2' (x:xs) (Just s) = sem2' xs (semCmd2 x (Just s))
+sem2' xs Nothing = Nothing
 
 
 --semCmd2 :: Cmd -> E
@@ -73,7 +79,7 @@ semCmd2 (DEF c p) (Just (x, y)) = if not (doExist c (x,y))
 								   then Just (x,((c,p):y))
 								   else Nothing
 semCmd2 (CALL c)  (Just (x, y)) = if doExist c (x,y)
-								   then sem2 (findIndex c (x,y)) (Just (x,y))
+								   then sem2' (findIndex c (x,y)) (Just (x,y))
 					 			   else Nothing
 
 --sandbox
