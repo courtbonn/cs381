@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="no"?>
+  <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+     "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+  <svg width="12cm" height="11cm" viewBox="0 0 1200 1100"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <title>Mini Logo Result Viewer</title>
+  <desc>A set of line segments</desc>
+  <rect x="10" y="10" width="1180" height="1080"        fill="none" stroke="red" /> <path d="M 50 1050 L 250 650" stroke="blue" stroke-width="5" />
+<path d="M 250 650 L 350 550" stroke="blue" stroke-width="5" />
+</svg>
