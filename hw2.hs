@@ -161,8 +161,8 @@ semCmd2 MULT (x,y)
 semCmd2 DUP (x,y)
 				| semCmd DUP x == Nothing = Nothing
 				| otherwise		  = Just (x, y)
-semCmd2 (DEF str p) (x, y) = Just ((str, p):x, y)
-semCmd2 (CALL str)  (x, y) = case (lookup str x) of
+semCmd2 (DEF str p) (x, y) = Just (x, (str, p):y)
+semCmd2 (CALL str)  (x, y) = case (lookup str y) of
                       Nothing -> Nothing
                       Just com -> sem2 com (x,y) 
 
