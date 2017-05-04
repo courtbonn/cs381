@@ -177,3 +177,5 @@ moveTest1 = Pen Down `Seq` MoveTo 1 1
 semTest1 = sem' moveTest1  --[(0,0,1,1)]
 moveTest2 = Pen Down `Seq` MoveTo 2 4 `Seq` MoveTo 3 5
 semTest2 = sem' moveTest2 --[(0,0,2,4),(2,4,3,5)]
+moveTest3 = Pen Down `Seq` MoveTo 0 1 `Seq` MoveTo 1 1 `Seq` MoveTo 1 2 `Seq` MoveTo 2 2
+semTest3 = sem' moveTest3 
