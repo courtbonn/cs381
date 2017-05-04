@@ -58,13 +58,14 @@ type State	= (Stack, Macros)
 --type E		= Maybe State -> Maybe State
 type E = State -> Maybe State
 
-{- doExist :: String -> State -> Bool
-doExist s t = s `elem` (map fst (snd t))
 
-findIndex :: String -> State -> Prog
-findIndex s (t,c:cs) 
+{- dExist :: String -> State -> Bool
+dExist s t = s `elem` (map fst (snd t))
+
+fIndex :: String -> State -> Prog
+fIndex s (t,c:cs) 
 				 | fst c == s = snd c
-				 | otherwise  = findIndex s (t,cs)
+				 | otherwise  = fIndex s (t,cs)
 -}
 
 --sem :: Prog -> Stack
@@ -138,12 +139,12 @@ semCmd2 MULT (Just (x,y))
 semCmd2 DUP (Just (x,y))
 				| semCmd DUP x == Nothing = Nothing
 				| otherwise		  = Just ((semCmd DUP x), y)
-semCmd2 (DEF c p) (Just (x, y)) = if not (doExist c (x,y))
+semCmd2 (DEF c p) (Just (x, y)) = if not (dExist c (x,y))
 								   then Just (x,((c,p):y))
 								   else Nothing
-semCmd2 (CALL c)  (Just (x, y)) = if doExist c (x,y)
-								   then sem2' (findIndex c (x,y)) (Just (x,y))
-					 			   else Nothing 
+semCmd2 (CALL c)  (Just (x, y)) = if dExist c (x,y)
+								   then sem2' (fIndex c (x,y)) (Just (x,y))
+					 			   else Nothing
 									
 -}
 
