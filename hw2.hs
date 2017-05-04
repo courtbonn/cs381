@@ -50,39 +50,55 @@ data Cmd	= LD Int
 		| CALL String
 		deriving Show
 
-type Stack	= Maybe [Int]
-type D		= Stack -> Stack
+type Stack	= [Int]
+type D		= Stack -> Maybe Stack
 
 type Macros	= [(String, Prog)]
 type State	= (Stack, Macros)
-type E		= Maybe State -> Maybe State
+--type E		= Maybe State -> Maybe State
+type E = State -> Maybe State
 
-
-doExist :: String -> State -> Bool
+{- doExist :: String -> State -> Bool
 doExist s t = s `elem` (map fst (snd t))
 
 findIndex :: String -> State -> Prog
 findIndex s (t,c:cs) 
 				 | fst c == s = snd c
 				 | otherwise  = findIndex s (t,cs)
+-}
 
+--sem :: Prog -> Stack
+--sem [] = Nothing
+--sem xs = sEm' xs (Just [])
 
-sem :: Prog -> Stack
-sem [] = Nothing
-sem xs = sEm' xs (Just [])
+--sEm' :: Prog -> D
+--sEm' [] (Just s) = Just s
+--sEm' (x:xs) (Just s) = sEm' xs (semCmd x (Just s))
+--sEm' xs Nothing = Nothing   
 
-sEm' :: Prog -> D
-sEm' [] (Just s) = Just s
-sEm' (x:xs) (Just s) = sEm' xs (semCmd x (Just s))
-sEm' xs Nothing = Nothing   
+sem :: Prog -> D
+sem [] s = Just s
+sem (x:xs) s = case (semCmd x s) of 
+         Nothing -> Nothing
+         Just s' -> sem xs s' 
+
+--semCmd :: Cmd -> D
+--semCmd (LD i)       (Just x) = Just (i:x)
+--semCmd (DUP)     (Just (x:xs)) = Just (x:x:xs)
+--semCmd (DUP)         _  = Nothing
+--semCmd (ADD)   (Just (x:y:xs)) = Just ((x+y):xs)
+--semCmd (ADD)  	     _	= Nothing
+--semCmd (MULT)  (Just (x:y:xs)) = Just ((x*y):xs)
+--semCmd (MULT)        _  = Nothing 
+
 
 semCmd :: Cmd -> D
-semCmd (LD i)       (Just x) = Just (i:x)
-semCmd (DUP)     (Just (x:xs)) = Just (x:x:xs)
+semCmd (LD i)       (x) = Just (i:x)
+semCmd (DUP)     (x:xs) = Just (x:x:xs)
 semCmd (DUP)         _  = Nothing
-semCmd (ADD)   (Just (x:y:xs)) = Just ((x+y):xs)
+semCmd (ADD)   (x:y:xs) = Just ((x+y):xs)
 semCmd (ADD)  	     _	= Nothing
-semCmd (MULT)  (Just (x:y:xs)) = Just ((x*y):xs)
+semCmd (MULT)  (x:y:xs) = Just ((x*y):xs)
 semCmd (MULT)        _  = Nothing
 
 --Exercise 1-2: Extended 
@@ -92,7 +108,7 @@ semCmd (MULT)        _  = Nothing
 --b) Defined above: type State	= (Stack, Macros)
 
 --c)
-
+{-
 sem2 :: Prog -> Maybe State
 sem2 [] = Nothing
 sem2 xs = sem2' xs (Just (Just [],[]))
@@ -100,9 +116,15 @@ sem2 xs = sem2' xs (Just (Just [],[]))
 sem2' :: Prog -> E
 sem2' [] (Just s) = Just s
 sem2' (x:xs) (Just s) = sem2' xs (semCmd2 x (Just s))
-sem2' xs Nothing = Nothing
+sem2' xs Nothing = Nothing -}
 
+sem2 :: Prog -> E
+sem2 [] s = Just s
+sem2 (x:xs) s = case (semCmd2 x s) of
+          Nothing -> Nothing
+          Just s' -> sem2 xs s'
 
+{-
 semCmd2 :: Cmd -> E
 semCmd2 (LD i) (Just (x,y))	
 				| semCmd (LD i) x == Nothing = Nothing
@@ -121,7 +143,27 @@ semCmd2 (DEF c p) (Just (x, y)) = if not (doExist c (x,y))
 								   else Nothing
 semCmd2 (CALL c)  (Just (x, y)) = if doExist c (x,y)
 								   then sem2' (findIndex c (x,y)) (Just (x,y))
-					 			   else Nothing
+					 			   else Nothing 
+									
+-}
+
+semCmd2 :: Cmd -> E
+semCmd2 (LD i) (x,y)	
+				| semCmd (LD i) x == Nothing = Nothing
+				| otherwise		     = Just (x, y)
+semCmd2 ADD (x,y)
+				| semCmd ADD x == Nothing = Nothing
+				| otherwise		  = Just (x, y)
+semCmd2 MULT (x,y)
+				| semCmd MULT x == Nothing = Nothing
+				| otherwise		  = Just (x, y)
+semCmd2 DUP (x,y)
+				| semCmd DUP x == Nothing = Nothing
+				| otherwise		  = Just (x, y)
+semCmd2 (DEF str p) (x, y) = Just ((str, p):x, y)
+semCmd2 (CALL str)  (x, y) = case (lookup str x) of
+                      Nothing -> Nothing
+                      Just com -> sem2 com (x,y) 
 
 --sandbox
 p :: Prog
