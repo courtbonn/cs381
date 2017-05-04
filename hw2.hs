@@ -49,6 +49,12 @@ semCmd (MULT)        _  = Nothing
 
 --Exercise 1-2: Extended 
 
+--a) See above abstract syntax for Cmd for the extended syntax. 
+
+--b) Defined above: type State	= (Stack, Macros)
+
+--c)
+
 sem2 :: Prog -> Maybe State
 sem2 [] = Nothing
 sem2 xs = sem2' xs (Just (Just [],[]))
@@ -57,9 +63,6 @@ sem2' :: Prog -> E
 sem2' [] (Just s) = Just s
 sem2' (x:xs) (Just s) = sem2' xs (semCmd2 x (Just s))
 sem2' xs Nothing = Nothing
-
-
---semCmd2 :: Cmd -> E
 
 
 semCmd2 :: Cmd -> E
@@ -100,3 +103,22 @@ test3 = [LD 3, DEF "dadm" [DUP,ADD,DUP,MULT], DEF "dam" [DUP,ADD,DUP], CALL "dad
 
 u = [LD 3, DEF "dadm" [DUP,ADD,DUP,MULT], CALL "dadm"]
 u' = [LD 3, DEF "dadm" [DUP,ADD,DUP,MULT], DEF "dam" [DUP,ADD,DUP], CALL "dadm", CALL "dam"]
+
+--Exercise 3 Mini Logo
+
+data Cmd2 = Pen Mode 
+		  | MoveTo Int Int
+		  | Seq Cmd2 Cmd2
+		  deriving Show
+
+data Mode = Up | Down
+
+type State2 = (Mode, Int, Int)
+
+type Line = (Int, Int, Int, Int)
+
+type Lines = [Line] 
+
+--semS :: Cmd -> State -> (State, Lines)
+
+--sem' :: Cmd -> Lines
