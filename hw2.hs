@@ -111,7 +111,7 @@ data Cmd2 = Pen Mode
 		  | Seq Cmd2 Cmd2
 		  deriving Show
 
-data Mode = Up | Down
+data Mode = Up | Down deriving Show
 
 type State2 = (Mode, Int, Int)
 
@@ -119,10 +119,23 @@ type Line = (Int, Int, Int, Int)
 
 type Lines = [Line] 
 
---semS :: Cmd -> State -> (State, Lines)
+semS :: Cmd2 -> State2 -> (State2, Lines)
+semS (Pen Up) (_,x,y) = ((Up,x,y), [])
+semS (Pen Down) (_,x,y) = ((Down,x,y), [])
+semS (MoveTo m s) (Up,x,y) = ((Up,m,s),[])
+semS (MoveTo m s) (Down,x,y) = ((Down,m,s), [(x,y,m,s)])
+semS (Seq cmd1 cmd2) s = (fst s2, snd s1 ++ snd s2) 
+						where
+							s1 = semS cmd1 s
+							s2 = semS cmd2 (fst s1)
 
 --initial state:
 initstate = (Up, 0, 0)
 
---sem' :: Cmd -> Lines
---sem' s = snd (semS s initstate)
+sem' :: Cmd2 -> Lines
+sem' s = snd (semS s initstate)
+
+moveTest1 = Pen Down `Seq` MoveTo 1 1
+semTest1 = sem' moveTest1  --[(0,0,1,1)]
+moveTest2 = Pen Down `Seq` MoveTo 2 4 `Seq` MoveTo 3 5
+semTest2 = sem' moveTest2 --[(0,0,2,4),(2,4,3,5)]
