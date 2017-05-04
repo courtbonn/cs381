@@ -42,56 +42,28 @@ ppPos x y = show (50+factor*x)++" "++show (yMax-50-factor*y)
 
 
 type Prog 	= [Cmd]
+
+type Stack	= [Int]
+type D		= Stack -> Maybe Stack
+
+type Macros	= [(String, Prog)]
+type State	= (Macros, Stack)
+type E 		= State -> Maybe State
+
 data Cmd	= LD Int
 		| ADD
 		| MULT
 		| DUP
 		| DEF String Prog
 		| CALL String
-		deriving Show
-
-type Stack	= [Int]
-type D		= Stack -> Maybe Stack
-
-type Macros	= [(String, Prog)]
-type State	= (Stack, Macros)
---type E		= Maybe State -> Maybe State
-type E = State -> Maybe State
-
-
-{- dExist :: String -> State -> Bool
-dExist s t = s `elem` (map fst (snd t))
-
-fIndex :: String -> State -> Prog
-fIndex s (t,c:cs) 
-				 | fst c == s = snd c
-				 | otherwise  = fIndex s (t,cs)
--}
-
---sem :: Prog -> Stack
---sem [] = Nothing
---sem xs = sEm' xs (Just [])
-
---sEm' :: Prog -> D
---sEm' [] (Just s) = Just s
---sEm' (x:xs) (Just s) = sEm' xs (semCmd x (Just s))
---sEm' xs Nothing = Nothing   
+		deriving (Eq,Show)
+ 
 
 sem :: Prog -> D
 sem [] s = Just s
 sem (x:xs) s = case (semCmd x s) of 
          Nothing -> Nothing
          Just s' -> sem xs s' 
-
---semCmd :: Cmd -> D
---semCmd (LD i)       (Just x) = Just (i:x)
---semCmd (DUP)     (Just (x:xs)) = Just (x:x:xs)
---semCmd (DUP)         _  = Nothing
---semCmd (ADD)   (Just (x:y:xs)) = Just ((x+y):xs)
---semCmd (ADD)  	     _	= Nothing
---semCmd (MULT)  (Just (x:y:xs)) = Just ((x*y):xs)
---semCmd (MULT)        _  = Nothing 
-
 
 semCmd :: Cmd -> D
 semCmd (LD i)       (x) = Just (i:x)
@@ -106,18 +78,9 @@ semCmd (MULT)        _  = Nothing
 
 --a) See above abstract syntax for Cmd for the extended syntax. 
 
---b) Defined above: type State	= (Stack, Macros)
+--b) Defined above: type State	= (Macros, Stack)
 
 --c)
-{-
-sem2 :: Prog -> Maybe State
-sem2 [] = Nothing
-sem2 xs = sem2' xs (Just (Just [],[]))
-
-sem2' :: Prog -> E
-sem2' [] (Just s) = Just s
-sem2' (x:xs) (Just s) = sem2' xs (semCmd2 x (Just s))
-sem2' xs Nothing = Nothing -}
 
 sem2 :: Prog -> E
 sem2 [] s = Just s
@@ -125,46 +88,24 @@ sem2 (x:xs) s = case (semCmd2 x s) of
           Nothing -> Nothing
           Just s' -> sem2 xs s'
 
-{-
 semCmd2 :: Cmd -> E
-semCmd2 (LD i) (Just (x,y))	
-				| semCmd (LD i) x == Nothing = Nothing
-				| otherwise		     = Just ((semCmd (LD i) x), y)
-semCmd2 ADD (Just (x,y))
-				| semCmd ADD x == Nothing = Nothing
-				| otherwise		  = Just ((semCmd ADD x), y)
-semCmd2 MULT (Just (x,y))
-				| semCmd MULT x == Nothing = Nothing
-				| otherwise		  = Just ((semCmd MULT x), y)
-semCmd2 DUP (Just (x,y))
-				| semCmd DUP x == Nothing = Nothing
-				| otherwise		  = Just ((semCmd DUP x), y)
-semCmd2 (DEF c p) (Just (x, y)) = if not (dExist c (x,y))
-								   then Just (x,((c,p):y))
-								   else Nothing
-semCmd2 (CALL c)  (Just (x, y)) = if dExist c (x,y)
-								   then sem2' (fIndex c (x,y)) (Just (x,y))
-					 			   else Nothing
-									
--}
+semCmd2 (LD i) (m, s) = case (semCmd (LD i) s) of
+			Nothing -> Nothing
+			Just s' -> Just (m, s')
+semCmd2 (DUP)  (m, s) = case (semCmd (DUP) s) of
+			Nothing -> Nothing
+			Just s' -> Just (m, s')
+semCmd2 (ADD)  (m, s) = case (semCmd (ADD) s) of
+			Nothing -> Nothing
+			Just s' -> Just (m, s')
+semCmd2 (MULT) (m, s) = case (semCmd (MULT) s) of
+			Nothing -> Nothing
+			Just s' -> Just (m, s')
 
-semCmd2 :: Cmd -> E
-semCmd2 (LD i) (x,y)	
-				| semCmd (LD i) x == Nothing = Nothing
-				| otherwise		     = Just (x, y)
-semCmd2 ADD (x,y)
-				| semCmd ADD x == Nothing = Nothing
-				| otherwise		  = Just (x, y)
-semCmd2 MULT (x,y)
-				| semCmd MULT x == Nothing = Nothing
-				| otherwise		  = Just (x, y)
-semCmd2 DUP (x,y)
-				| semCmd DUP x == Nothing = Nothing
-				| otherwise		  = Just (x, y)
-semCmd2 (DEF str p) (x, y) = Just (x, (str, p):y)
-semCmd2 (CALL str)  (x, y) = case (lookup str y) of
-                      Nothing -> Nothing
-                      Just com -> sem2 com (x,y) 
+semCmd2 (DEF str p) (x,y) = Just ((str, p):x, y)
+semCmd2 (CALL str)  (x,y) = case (lookup str x) of
+			    Nothing  -> Nothing
+			    Just com -> sem2 com (x,y)
 
 --sandbox
 p :: Prog
@@ -185,12 +126,13 @@ test3 = [LD 3, DEF "dadm" [DUP,ADD,DUP,MULT], DEF "dam" [DUP,ADD,DUP], CALL "dad
 u = [LD 3, DEF "dadm" [DUP,ADD,DUP,MULT], CALL "dadm"]
 u' = [LD 3, DEF "dadm" [DUP,ADD,DUP,MULT], DEF "dam" [DUP,ADD,DUP], CALL "dadm", CALL "dam"]
 
+
 --Exercise 3 Mini Logo
 
 data Cmd2 = Pen Mode 
-		  | MoveTo Int Int
-		  | Seq Cmd2 Cmd2
-		  deriving Show
+          | MoveTo Int Int
+          | Seq Cmd2 Cmd2
+        deriving Show
 
 data Mode = Up | Down deriving Show
 
