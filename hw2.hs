@@ -1,6 +1,6 @@
 --Class: CS 381 Spring 2017
---Assignment: Homework 2
---Authors: Rex Henzie, Jacob Geddings, Garrett Bauer
+--Assignment: Homework 2 "Semantics"
+--Authors: Rex Henzie, Jacob Geddings, Garrett Bauer, Courtney Bonn
 module Hw2 where
 
 import System.IO
