@@ -121,4 +121,8 @@ type Lines = [Line]
 
 --semS :: Cmd -> State -> (State, Lines)
 
+--initial state:
+initstate = (Up, 0, 0)
+
 --sem' :: Cmd -> Lines
+--sem' s = snd (semS s initstate)
