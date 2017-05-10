@@ -54,3 +54,36 @@ semCmd (DUP) (x:xs) = x:x:xs
 semCmd (INC) (x:xs) = x+1:xs
 semCmd (SWAP) (x:y:xs) = y:x:xs
 semCmd (POP x) s = drop x s
+
+--Exercise 2
+data Shape = X
+	| TD Shape Shape
+	| LR Shape Shape
+	deriving Show
+
+type BBox = (Int, Int)
+
+--Part a)
+bbox :: Shape -> BBox
+bbox 	      X = (1, 1)
+bbox   (TD x y) = let (a,b) = bbox x
+		      (c,d) = bbox y
+		  in (max a c, b+d)
+bbox   (LR x y) = let (a,b) = bbox x
+		      (c,d) = bbox y
+		  in (a+c, max b d)
+--Part b)
+rect :: Shape -> Maybe BBox
+rect X = Just (1,1)
+rect (TD x y) = case rect x of
+		Nothing -> Nothing
+		Just (a,b) -> case rect y of
+			      Nothing -> Nothing
+			      Just (c,d) -> if a == c then Just (a, b+d)
+					    else Nothing
+rect (LR x y) = case rect x of
+		Nothing -> Nothing
+		Just (a,b) -> case rect y of
+			      Nothing -> Nothing
+			      Just (c,d) -> if b == d then Just (a+c, b)
+					    else Nothing
