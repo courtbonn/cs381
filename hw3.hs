@@ -13,7 +13,7 @@ data Cmd = LD Int
 
 type Rank = Int
 type CmdRank = (Int, Int)
-
+type Stack = [Int]
 
 --Part a)
 rankC :: Cmd -> CmdRank
@@ -37,4 +37,20 @@ rank (x:xs) r = if n-m > r
 		where (n, m) = rankC x
 
 --Part b)
+semStatTC :: Prog -> Maybe Stack
+semStatTC [] = Just []
+semStatTC p = case rankP p of
+		Nothing -> Nothing
+		Just r -> Just (sem p)
 
+sem :: Prog -> Stack
+sem = foldl (flip semCmd) []
+
+semCmd :: Cmd -> Stack -> Stack
+semCmd (LD x) s = (x:s)
+semCmd (ADD) (x:y:xs) = (x+y):xs
+semCmd (MULT) (x:y:xs) = (x*y):xs
+semCmd (DUP) (x:xs) = x:x:xs
+semCmd (INC) (x:xs) = x+1:xs
+semCmd (SWAP) (x:y:xs) = y:x:xs
+semCmd (POP x) s = drop x s
