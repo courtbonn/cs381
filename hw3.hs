@@ -87,3 +87,32 @@ rect (LR x y) = case rect x of
 			      Nothing -> Nothing
 			      Just (c,d) -> if b == d then Just (a+c, b)
 					    else Nothing
+
+--Exercise 3
+
+--Part a) f x y = if null x then [y] else x
+--        g x y = if not (null x) then [] else [y]
+
+-- (1) What are the types of f and g?
+-- f :: [a] -> a -> [a] 
+-- g :: a -> b -> [b]
+
+-- (2) Explain why the functions have these types.
+--F takes in a list of x and a value y and returns a list. 
+--G takes in two values x and y and returns either an empty list or a list of values. 
+
+-- (3) Which type is more general? 
+--G is more general because x and y can be two different types since they don't relate to each other and it can return an empty list.
+--F requires x and y to be the same type. 
+
+-- (4) Why do f and g have different types? 
+--Because f can return both x and [y], x and y have to be the same type otherwise a type error will occur. 
+--G is different because x and y don't have to be the same type since they don't relate to each other. 
+
+--Part b) 
+h :: [b] -> [(a,b)] -> [b]
+
+--Part c) 
+k :: (a -> b) -> ((a -> b) -> a) -> b
+
+--Part d) Can you define a function of type a -> b?
