@@ -118,5 +118,8 @@ h b a = map snd a ++ b
 
 --Part c) 
 --k :: (a -> b) -> ((a -> b) -> a) -> b
+k x y = (x (y (x)))
 
 --Part d) Can you define a function of type a -> b?
+--c :: a -> b
+--c a = 
