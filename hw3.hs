@@ -1,3 +1,6 @@
+--Class: CS 381 Spring 2017
+--Assignment: Homework 3 "Types"
+--Authors: Rex Henzie, Jacob Geddings, Garrett Bauer, Courtney Bonn
 module Homework3 where
 
 --Exercise 1
@@ -110,9 +113,10 @@ rect (LR x y) = case rect x of
 --G is different because x and y don't have to be the same type since they don't relate to each other. 
 
 --Part b) 
-h :: [b] -> [(a,b)] -> [b]
+--h :: [b] -> [(a,b)] -> [b]
+h b a = map snd a ++ b
 
 --Part c) 
-k :: (a -> b) -> ((a -> b) -> a) -> b
+--k :: (a -> b) -> ((a -> b) -> a) -> b
 
 --Part d) Can you define a function of type a -> b?
