@@ -122,4 +122,6 @@ k x y = (x (y (x)))
 
 --Part d) Can you define a function of type a -> b?
 --c :: a -> b
---c a = 
+--No, we can't define this function because we don't know anything about b.
+--The only possibility we found was c a = c a which is technically type correct, 
+--but it's a recursive function with no base case so it never ends. 
