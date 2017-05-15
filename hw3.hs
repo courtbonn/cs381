@@ -98,7 +98,7 @@ rect (LR x y) = case rect x of
 
 -- (1) What are the types of f and g?
 -- f :: [a] -> a -> [a] 
--- g :: a -> b -> [b]
+-- g :: [a] -> b -> [b]
 
 -- (2) Explain why the functions have these types.
 --F takes in a list of x and a value y and returns a list. 
