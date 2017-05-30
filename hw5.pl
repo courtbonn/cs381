@@ -28,8 +28,8 @@ usage(P,T) :- where(Y,P), when(Y,T).
 /* C */
 conflict(X,Y) :- where(X,N1), when(X,N2), where(Y,N1), when(Y,N2), X\=Y.
 
-
 /* D */
+meet(A,B) :- schedule(A,P,T), schedule(B,P,T), schedule(A,P,T1), schedule(B,P,T2), (T1+1)\==T2.
 
 
 /* Exercise 2 */
