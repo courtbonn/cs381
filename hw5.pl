@@ -26,6 +26,8 @@ schedule(S,P,T) :- enroll(S,Y), where(Y,P), when(Y,T).
 usage(P,T) :- where(Y,P), when(Y,T).
 
 /* C */
+conflict(X,Y) :- where(X,N1), when(X,N2), where(Y,N1), when(Y,N2), X\=Y.
+
 
 /* D */
 
