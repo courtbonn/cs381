@@ -34,5 +34,9 @@ meet(A,B) :- schedule(A, P, T1), schedule(B, P, T2), (T1 + 1) =:= T2.
 
 
 /* Exercise 2 */
+/* A */
+rdup([],[]).
+rdup([H|T],[H|Out]) :- not(member(H, T)), rdup(T, Out).
+rdup([H|T],Out) :- member(H, T), rdup(T, Out).
 
 
