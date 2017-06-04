@@ -1,5 +1,5 @@
-
-/* Exercise 1 */
+/* Authors Rex Henzie, Jacob Geddings, Garrett Bauer, Courtney Bonn 
+ Exercise 1 */
 
 when(275,10).
 when(261,12).
