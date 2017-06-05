@@ -40,3 +40,8 @@ rdup([H|T],[H|Out]) :- not(member(H, T)), rdup(T, Out).
 rdup([H|T],Out) :- member(H, T), rdup(T, Out).
 
 
+/* C (Incomplete)*/
+project(_, [], []).
+project([], _, []).
+project([1|T], [H|T1], [H|L]) :- project(T, T1, L).
+/* project([I|T], [_|T1], L) :- (I - 1), project([I|T], T1, L). */
