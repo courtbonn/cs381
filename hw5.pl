@@ -39,6 +39,11 @@ rdup([],[]).
 rdup([H|T],[H|Out]) :- not(member(H, T)), rdup(T, Out).
 rdup([H|T],Out) :- member(H, T), rdup(T, Out).
 
+/* B */
+flat([], []). :- !.
+flat([H|T], Out) :- !, flat(H,H2), flat(T,T2), append(H2,T2,Out).
+flat(H, [H]).
+
 
 /* C */
 project([], _, []).
