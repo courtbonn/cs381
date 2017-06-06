@@ -1,4 +1,5 @@
 /* Authors Rex Henzie, Jacob Geddings, Garrett Bauer, Courtney Bonn 
+   Assignment 5 - Prolog
  Exercise 1 */
 
 when(275,10).
