@@ -48,7 +48,10 @@ flat(H, [H]).
 /* C */
 project([], _, []).
 project(_, [], []).
-project([1|T0], [H|T], [H|Out]) :- project(T0, T, Out).
-project([I|T0], [_|T], Out) :- (I > 1),I1 is (I - 1), project([I1|T0], T, Out).
+project([1|T0], [H|T], [H|Out]) :- project(T0, [H|T], Out).
+project([I|T0], [_|T], Out) :- (I > 1), maplist(sub, [I|T0], Ret), project(Ret, T, Out).
+
+sub(X, Y) :- Y is (X - 1).
+
 
 
