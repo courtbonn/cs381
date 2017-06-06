@@ -1,7 +1,6 @@
 /* Authors Rex Henzie, Jacob Geddings, Garrett Bauer, Courtney Bonn 
    Assignment 5 - Prolog
  Exercise 1 */
-
 when(275,10).
 when(261,12).
 when(381,11).
@@ -33,7 +32,6 @@ conflict(X,Y) :- where(X,N1), when(X,N2), where(Y,N1), when(Y,N2), X\=Y.
 meet(A,B) :- schedule(A, P, T), schedule(B, P, T).
 meet(A,B) :- schedule(A, P, T1), schedule(B, P, T2), (T1 + 1) =:= T2.
 
-
 /* Exercise 2 */
 /* A */
 rdup([],[]).
@@ -45,7 +43,6 @@ flat([], []). :- !.
 flat([H|T], Out) :- !, flat(H,H2), flat(T,T2), append(H2,T2,Out).
 flat(H, [H]).
 
-
 /* C */
 project([], _, []).
 project(_, [], []).
@@ -53,6 +50,3 @@ project([1|T0], [H|T], [H|Out]) :- project(T0, [H|T], Out).
 project([I|T0], [_|T], Out) :- (I > 1), maplist(sub, [I|T0], Ret), project(Ret, T, Out).
 
 sub(X, Y) :- Y is (X - 1).
-
-
-
